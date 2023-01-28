@@ -12,6 +12,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
 
+import static javax.swing.ScrollPaneConstants.COLUMN_HEADER;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+
 public class ViewSell extends JPanel implements ActionListener {
 
     ViewSellCient sellCutomer;
@@ -35,7 +38,6 @@ public class ViewSell extends JPanel implements ActionListener {
     DefaultTableModel producttbl, waittbl, shiptbl, billtbl;
     Font font = new Font("Tahoma", Font.BOLD, 15);
     int number_listHD = 1;
-    ArrayList<String> listIdpro;
 
     public ViewSell() {
 //        this.setSize(1660, 1030);
@@ -67,24 +69,29 @@ public class ViewSell extends JPanel implements ActionListener {
         show.setBounds(400, 40, 200, 30);
         show.setBackground(Color.WHITE);
 
-
         listsp = new JScrollPane();
+        listsp.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 //        productTb = new JTable();
 //        producttbl = new DefaultTableModel();
 //        productTb.setModel(producttbl);
 //
+//        producttbl.addColumn("Mã sản phẩm");
 //        producttbl.addColumn("Tên sản phẩm");
 //        producttbl.addColumn("Giá");
+
         list = new JPanel();
-        list.setLayout(new FlowLayout(FlowLayout.LEFT));
-//        list.add(new Item());
+        list.setLayout(new FlowLayout(FlowLayout.LEADING));
+
+        try {
+            ShowProduct();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+//        list.add(new Item("SP1", "Bạc xỉu", 20000));
+//        list.add(new Item("SP2", "Đá xay", 25000));
         listsp.setBounds(5, 80, 640, 400);
         listsp.setViewportView(list);
-
-//=======================================================================
-//        for (int i = 0; i <= listIdpro.size(); i++)
-//            System.out.println(listIdpro.get(i));
-//=======================================================================
 
         wait = new JLabel("Hóa đơn chờ:");
         wait.setBounds(5, 480, 200, 30);
@@ -406,25 +413,32 @@ public class ViewSell extends JPanel implements ActionListener {
 
         this.add(info, BorderLayout.WEST);
         this.add(order, BorderLayout.EAST);
-
+//        try {
+//            ShowProduct();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
         this.setVisible(true);
     }
 
     public void ShowProduct() throws Exception {
         Connection connect = new DBConnect().getConnect();
-        String query = "SELECT `TenSP`, `GiaSP` FROM `sanpham` WHERE 1";
+        String query = "SELECT `MaSP`, `TenSP`, `GiaSP` FROM `sanpham` WHERE 1";
         Statement sta = connect.createStatement();
         ResultSet result = sta.executeQuery(query);
 
-        producttbl.setRowCount(0);
+//        producttbl.setRowCount(0);
 
         while(result.next()) {
-            Object Products[] = {
-                result.getString("Tên sản phẩm"),
-                result.getInt("Giá")
-            };
-            producttbl.addRow(Products);
-            producttbl.fireTableDataChanged();
+
+            list.add(new Item(result.getString("MaSP"), result.getString("TenSP"), result.getInt("GiaSP")));
+//            Object Products[] = {
+//                result.getString("MaSP"),
+//                result.getString("TenSP"),
+//                result.getInt("GiaSP")
+//            };
+//            producttbl.addRow(Products);
+//            producttbl.fireTableDataChanged();
         }
         result.close();
         connect.close();

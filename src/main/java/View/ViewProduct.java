@@ -251,7 +251,7 @@ public class ViewProduct extends JPanel implements ActionListener {
         result.close();
         connect.close();
     }
-//đây đây
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addbtn) {
@@ -263,8 +263,8 @@ public class ViewProduct extends JPanel implements ActionListener {
                     ProductList();
                     inputReset();
                     JOptionPane.showMessageDialog(null, "Thêm thành công");
-                    viewSell.list.add(new Item(id, name, cost));
-//                    viewSell = new ViewSell();
+//                    viewSell.list.add(new Item(id, name, cost));
+                    viewSell.ShowProduct();
                 }
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
