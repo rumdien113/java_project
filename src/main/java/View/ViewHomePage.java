@@ -1,32 +1,41 @@
 package View;
 
+import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ViewHomePage extends JFrame implements ActionListener {
-    ViewLogin login;
-    ViewSell sellContent = new ViewSell();
-    ViewBill billContent = new ViewBill();
-    ViewProduct productContent = new ViewProduct();
-    ViewPromotion promotionContent = new ViewPromotion();
-    ViewStatistic statisticContent = new ViewStatistic();
-    ViewStaff staffContent = new ViewStaff();
-
+    private ViewLogin login;
+    private ViewSell sellContent;
+    private ViewBill billContent;
+    private ViewProduct productContent;
+    private ViewPromotion promotionContent;
+    private ViewStatistic statisticContent;
+    private ViewStaff staffContent;
     JPanel Header, AllContent, SideBar, Content;
     JPanel logo, button;
-    JButton shift, changePassword, logOut;
+    JButton shift, changePassword, logOut, exit;
     JButton homePage, sell, bill, product, promotion, statistical, staff;
     //      trang chủ, bán hàng, hóa đơn, sản phẩm, khuyến mãi, thống kê, nhân viên
-    JLabel logoLabel, nameTag, home_content;
+    JLabel logoLabel, nameTag, home_content, timeDate;
     ImageIcon logoIM, homeIM, sellIM, billIM, productIM, promoIM, statistIM, staffIM, contentHomePage;
     Color coffee = new Color(156, 112, 85);
     Color white = new Color(255, 255, 255);
     Font fontButton = new Font("Italic", Font.BOLD, 20);
-    CardLayout cl = new CardLayout();
+    Calendar calendar;
+    SimpleDateFormat timeFormat;
+    String time;
+//    CardLayout cl = new CardLayout();
+    public static String idStaff, nameStaff;
 
-    public ViewHomePage() {
+    public ViewHomePage(String id, String username) {
+        idStaff = id; nameStaff = username;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        this.setSize(1920, 1080);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -48,42 +57,61 @@ public class ViewHomePage extends JFrame implements ActionListener {
 
         //===============================Header===============================
         Header = new JPanel();
+        Header.setLayout(null);
         Header.setBackground(coffee);
         Header.setPreferredSize(new Dimension(1660, 40));
 
         shift = new JButton("Giao ca");
+        shift.setBounds(10, 3, 100, 30);
         shift.setBackground(white);
+        shift.setFocusPainted(false);
         shift.addActionListener(this);
 
         changePassword = new JButton("Đổi mật khẩu");
         changePassword.setBackground(white);
+        changePassword.setFocusPainted(false);
+        changePassword.setBounds(120, 3, 150, 30);
 
         logOut = new JButton("Đăng xuất");
         logOut.setBackground(white);
+        logOut.setFocusPainted(false);
+        logOut.setBounds(280, 3, 100, 30);
 
-        nameTag = new JLabel("Welcome to cafe dev");
+        nameTag = new JLabel("Welcome to cafe dev - " + username);
+        ViewSell.namestaff = nameStaff;
+        ViewSell.idstaff = idStaff;
+        nameTag.setFont(new Font("Tahoma", Font.PLAIN, 20));
         nameTag.setForeground(white);
+        nameTag.setBounds(390, 3, 700, 30);
+
+        timeFormat = new SimpleDateFormat("hh:mm:ss a");
+        time = timeFormat.format(Calendar.getInstance().getTime());
+
+        timeDate = new JLabel(time);
+        timeDate.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        timeDate.setForeground(white);
+        timeDate.setBounds(1050, 3, 150, 30);
+
+        exit = new JButton("Thoát");
+        exit.setBackground(white);
+        exit.setFocusPainted(false);
+        exit.setBounds(1200, 3, 75, 30);
+        exit.addActionListener(this);
 
         Header.add(shift);
         Header.add(changePassword);
         Header.add(logOut);
         Header.add(nameTag);
+        Header.add(timeDate);
+        Header.add(exit);
 
         //===============================Content===============================
         Content = new JPanel();
-        Content.setLayout(cl);
+//        Content.setLayout(cl);
         Content.setBackground(new Color(255,248,220));
 
         home_content = new JLabel();
         home_content.setIcon(contentHomePage);
-
-        Content.add("homePage", home_content);
-        Content.add("sell", sellContent);
-        Content.add("bill", billContent);
-        Content.add("product", productContent);
-        Content.add("promotion", promotionContent);
-        Content.add("statistic", statisticContent);
-        Content.add("staff", staffContent);
 
         AllContent.add(Header, BorderLayout.NORTH);
         AllContent.add(Content, BorderLayout.CENTER);
@@ -112,6 +140,7 @@ public class ViewHomePage extends JFrame implements ActionListener {
         homePage.setForeground(white);
         homePage.setBorder(BorderFactory.createRaisedBevelBorder());
         homePage.setSize(160, 30);
+        homePage.setFocusPainted(false);
         homePage.addActionListener(this);
 
         sell = new JButton("Bán hàng");
@@ -121,6 +150,7 @@ public class ViewHomePage extends JFrame implements ActionListener {
         sell.setForeground(white);
         sell.setBorder(BorderFactory.createRaisedBevelBorder());
         sell.setSize(160, 30);
+        sell.setFocusPainted(false);
         sell.addActionListener(this);
 
         bill = new JButton("Hóa đơn");
@@ -130,6 +160,7 @@ public class ViewHomePage extends JFrame implements ActionListener {
         bill.setForeground(white);
         bill.setBorder(BorderFactory.createRaisedBevelBorder());
         bill.setSize(160, 30);
+        bill.setFocusPainted(false);
         bill.addActionListener(this);
 
         product = new JButton("Sản phẩm");
@@ -139,6 +170,7 @@ public class ViewHomePage extends JFrame implements ActionListener {
         product.setForeground(white);
         product.setBorder(BorderFactory.createRaisedBevelBorder());
         product.setSize(160, 30);
+        product.setFocusPainted(false);
         product.addActionListener(this);
 
         promotion = new JButton("Khuyến mãi");
@@ -148,6 +180,7 @@ public class ViewHomePage extends JFrame implements ActionListener {
         promotion.setForeground(white);
         promotion.setBorder(BorderFactory.createRaisedBevelBorder());
         promotion.setSize(160, 30);
+        promotion.setFocusPainted(false);
         promotion.addActionListener(this);
 
         statistical = new JButton("Thống kê");
@@ -157,6 +190,7 @@ public class ViewHomePage extends JFrame implements ActionListener {
         statistical.setForeground(white);
         statistical.setBorder(BorderFactory.createRaisedBevelBorder());
         statistical.setSize(160, 30);
+        statistical.setFocusPainted(false);
         statistical.addActionListener(this);
 
         staff = new JButton("Nhân viên");
@@ -166,6 +200,7 @@ public class ViewHomePage extends JFrame implements ActionListener {
         staff.setForeground(white);
         staff.setBorder(BorderFactory.createRaisedBevelBorder());
         staff.setSize(160, 30);
+        staff.setFocusPainted(false);
         staff.addActionListener(this);
 
 //        SideBar.add(logoLabel);
@@ -183,25 +218,74 @@ public class ViewHomePage extends JFrame implements ActionListener {
         this.add(SideBar, BorderLayout.WEST);
         this.add(AllContent, BorderLayout.CENTER);
         this.setVisible(true);
+
+//        setTime();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == shift)
             login = new ViewLogin();
-        if (e.getSource() == homePage)
-            cl.show(Content, "homePage");
-        if (e.getSource() == sell)
-            cl.show(Content, "sell");
-        if (e.getSource() == product)
-            cl.show(Content, "product");
-        if (e.getSource() == staff)
-            cl.show(Content, "staff");
-        if (e.getSource() == bill)
-            cl.show(Content, "bill");
-        if (e.getSource() == promotion)
-            cl.show(Content, "promotion");
-        if (e.getSource() == statistical)
-            cl.show(Content, "statistic");
+        if (e.getSource() == exit)
+            System.exit(0);
+        if (e.getSource() == homePage) {
+            Content.removeAll();
+            Content = new JPanel();
+            Content.revalidate();
+            Content.repaint();
+        }
+        if (e.getSource() == sell) {
+            Content.removeAll();
+            sellContent = new ViewSell();
+            Content.add(sellContent);
+            Content.revalidate();
+            Content.repaint();
+        }
+        if (e.getSource() == product) {
+            Content.removeAll();
+            productContent = new ViewProduct();
+            Content.add(productContent);
+            Content.revalidate();
+            Content.repaint();
+        }
+        if (e.getSource() == staff) {
+            Content.removeAll();
+            staffContent = new ViewStaff();
+            Content.add(staffContent);
+            Content.revalidate();
+            Content.repaint();
+        }
+        if (e.getSource() == bill) {
+            Content.removeAll();
+            billContent = new ViewBill();
+            Content.add(billContent);
+            Content.revalidate();
+            Content.repaint();
+        }
+        if (e.getSource() == promotion) {
+            Content.removeAll();
+            promotionContent = new ViewPromotion();
+            Content.add(promotionContent);
+            Content.revalidate();
+            Content.repaint();
+        }
+        if (e.getSource() == statistical) {
+            Content.removeAll();
+            statisticContent = new ViewStatistic();
+            Content.add(statisticContent);
+            Content.revalidate();
+            Content.repaint();
+        }
+    }
+    public void setTime() {
+        while(true) {
+            time = timeFormat.format(Calendar.getInstance().getTime());
+            timeDate.setText(time);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

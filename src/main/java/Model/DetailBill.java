@@ -1,30 +1,37 @@
 package Model;
-
+//chi tiết hóa đơn
 public class DetailBill {
-    private String idBill;
+    private int idBill;
     private String idProduct;
     private String nameProduct;
-    private int amount; //số lượng
-    private int money;
+    private int quantity; //số lượng
     private int cost;
+    private int money;
 
-    DetailBill() {
-    }
 
-    DetailBill(String idBill, String idProduct, String nameProduct, int amount, int money, int cost) {
+    public DetailBill(String idProduct, int idBill) {
+        this.idProduct = idProduct;
         this.idBill = idBill;
+    }
+    public DetailBill(String idProduct, String nameProduct, int quantity, int money) {
         this.idProduct = idProduct;
         this.nameProduct = nameProduct;
-        this.amount = amount;
+        this.quantity = quantity;
         this.money = money;
+    }
+    public DetailBill(String idProduct, String nameProduct, int quantity, int cost, int money) {
+        this.idProduct = idProduct;
+        this.nameProduct = nameProduct;
+        this.quantity = quantity;
         this.cost = cost;
+        this.money = money;
     }
 
-    public String getIdBill() {
+    public int getIdBill() {
         return idBill;
     }
 
-    public void setIdBill(String idBill) {
+    public void setIdBill(int idBill) {
         this.idBill = idBill;
     }
 
@@ -44,12 +51,12 @@ public class DetailBill {
         this.nameProduct = nameProduct;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setQuantity(int amount) {
+        this.quantity = amount;
     }
 
     public int getMoney() {

@@ -1,15 +1,24 @@
 package View;
 
+import Controller.BillController;
+import Controller.DetailBillController;
+import Model.Bill;
+import Model.DetailBill;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class ViewBill extends JPanel {
-
+    BillController bC = new BillController();
+    DetailBillController dbC = new DetailBillController();
     JPanel bill_list, bill_info;
     JLabel billIdlb, statuslb,
-           listTitle, listId, listClient, listSdt, listTime, listType, listStatus, listSumMoney, listSubMoney, listMoney,
-           infoTitle, infoId, infoClient, infoSdt, infoTime, infoType, infoStatus, infoSumMoney, infoSubMoney, infoMoney;
+           listTitle, listId, listTime, listType, listStatus, listMoney,
+           infoTitle, infoId, infoTime, infoType, infoStatus, infoMoney;
     JScrollPane table, listBill;
     JTable billTable, listTable;
     JButton searchbtn;
@@ -22,10 +31,12 @@ public class ViewBill extends JPanel {
     public ViewBill() {
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        this.setLocation(0, 0);
+        this.setPreferredSize(new Dimension(1300, 820));
 
         bill_list = new JPanel();
         bill_list.setLayout(null);
-        bill_list.setBackground(new Color(255,248,220)  );
+        bill_list.setBackground(new Color(255,248,220));
         bill_list.setPreferredSize(new Dimension(650, 410));
 
         billIdlb = new JLabel("Mã HD:");
@@ -53,11 +64,19 @@ public class ViewBill extends JPanel {
 
         tbl.addColumn("Mã HD");
         tbl.addColumn("Nhân viên");
-        tbl.addColumn("Khách hàng");
         tbl.addColumn("Thời gian xuất HD");
+        tbl.addColumn("Loại thanh toán");
         tbl.addColumn("Tổng tiền");
-        tbl.addColumn("Địa chỉ");
         tbl.addColumn("Trạng thái");
+
+        try {
+            showBill();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        MouseClick mouseClick = new MouseClick();
+        billTable.addMouseListener(mouseClick);
 
         table.setBounds(10, 80, 1280, 310);
         table.setViewportView(billTable);
@@ -90,26 +109,6 @@ public class ViewBill extends JPanel {
         infoId.setBounds(180, 50,100, 25);
         infoId.setBackground(Color.WHITE);
 
-        listClient = new JLabel("Khách hàng:");
-        listClient.setFont(font1);
-        listClient.setBounds(10, 80, 100, 25);
-        listClient.setBackground(Color.WHITE);
-
-        infoClient = new JLabel("X");
-        infoClient.setFont(font1);
-        infoClient.setBounds(180, 80, 100, 25);
-        infoClient.setBackground(Color.WHITE);
-
-        listSdt = new JLabel("SĐT:");
-        listSdt.setFont(font1);
-        listSdt.setBounds(10, 110, 100, 25);
-        listSdt.setBackground(Color.WHITE);
-
-        infoSdt = new JLabel("X");
-        infoSdt.setFont(font1);
-        infoSdt.setBounds(180, 110, 100, 25);
-        infoSdt.setBackground(Color.WHITE);
-
         listTime = new JLabel("Thời gian xuất HD:");
         listTime.setFont(font1);
         listTime.setBounds(10, 140, 150, 25);
@@ -132,42 +131,22 @@ public class ViewBill extends JPanel {
 
         listStatus = new JLabel("Trạng thái:");
         listStatus.setFont(font1);
-        listStatus.setBounds(400, 50, 150, 25);
+        listStatus.setBounds(350, 50, 150, 25);
         listStatus.setBackground(Color.WHITE);
 
         infoStatus = new JLabel("X");
         infoStatus.setFont(new Font("Calibri", Font.BOLD, 30));
-        infoStatus.setBounds(400, 80, 150, 35);
+        infoStatus.setBounds(350, 80, 250, 35);
         infoStatus.setBackground(Color.WHITE);
-
-        listSumMoney = new JLabel("Tổng tiền SP:");
-        listSumMoney.setFont(font1);
-        listSumMoney.setBounds(400, 110, 150, 25);
-        listSumMoney.setBackground(Color.WHITE);
-
-        infoSumMoney = new JLabel("X");
-        infoSumMoney.setFont(font1);
-        infoSumMoney.setBounds(530, 110, 150, 25);
-        infoSumMoney.setBackground(Color.WHITE);
-
-        listSubMoney = new JLabel("Chi phí khác:");
-        listSubMoney.setFont(font1);
-        listSubMoney.setBounds(400, 140, 150, 25);
-        listSubMoney.setBackground(Color.WHITE);
-
-        infoSubMoney = new JLabel("X");
-        infoSubMoney.setFont(font1);
-        infoSubMoney.setBounds(530, 140, 150, 25);
-        infoSubMoney.setBackground(Color.WHITE);
 
         listMoney = new JLabel("Tổng tiền HD:");
         listMoney.setFont(font1);
-        listMoney.setBounds(400, 170, 150, 25);
+        listMoney.setBounds(350, 170, 150, 25);
         listMoney.setBackground(Color.WHITE);
 
         infoMoney = new JLabel("X");
         infoMoney.setFont(font1);
-        infoMoney.setBounds(530, 170, 150, 25);
+        infoMoney.setBounds(480, 170, 150, 25);
         infoMoney.setBackground(Color.WHITE);
 
         listTable = new JTable();
@@ -175,10 +154,9 @@ public class ViewBill extends JPanel {
         listBill = new JScrollPane();
 
         tbl1.addColumn("Tên SP");
-        tbl1.addColumn("Đơn Giá");
         tbl1.addColumn("Số lượng");
+        tbl1.addColumn("Đơn Giá");
         tbl1.addColumn("Thành tiền");
-        tbl1.addColumn("Ghi chú");
 
         listBill.setBounds(590, 50, 700, 250);
         listBill.setViewportView(listTable);
@@ -186,20 +164,12 @@ public class ViewBill extends JPanel {
         bill_info.add(listTitle);
         bill_info.add(listId);
         bill_info.add(infoId);
-        bill_info.add(listClient);
-        bill_info.add(infoClient);
-        bill_info.add(listSdt);
-        bill_info.add(infoSdt);
         bill_info.add(listTime);
         bill_info.add(infoTime);
         bill_info.add(listType);
         bill_info.add(infoType);
         bill_info.add(listStatus);
         bill_info.add(infoStatus);
-        bill_info.add(listSumMoney);
-        bill_info.add(infoSumMoney);
-        bill_info.add(listSubMoney);
-        bill_info.add(infoSubMoney);
         bill_info.add(listMoney);
         bill_info.add(infoMoney);
         bill_info.add(listBill);
@@ -207,5 +177,54 @@ public class ViewBill extends JPanel {
         this.add(bill_list, BorderLayout.NORTH);
         this.add(bill_info, BorderLayout.SOUTH);
         this.setVisible(true);
+    }
+    public void showBill() throws Exception {
+        tbl.setRowCount(0);
+        List<Bill> list = bC.select();
+        for (Bill b : list) {
+            Object Bill[] = {
+                    "HD" + b.getIdBill(),
+                    b.getNamestaff(),
+                    b.getDateBill(),
+                    b.getTypePay(),
+                    b.getTotalMoney(),
+                    b.getStatus()
+            };
+            tbl.addRow(Bill);
+            tbl.fireTableDataChanged();
+        }
+    }
+    public void showDetailBill(String id) throws Exception {
+        tbl1.setRowCount(0);
+        List<DetailBill> listDB = dbC.select(id);
+        for (DetailBill d : listDB) {
+            Object DetailBill[] = {
+                    d.getNameProduct(),
+                    d.getCost(),
+                    d.getQuantity(),
+                    d.getMoney()
+            };
+            tbl1.addRow(DetailBill);
+            tbl1.fireTableDataChanged();
+        }
+    }
+    private class MouseClick extends MouseAdapter {
+        public void mouseClicked(MouseEvent e) {
+            int selectRow = billTable.getSelectedRow();
+            if (selectRow >= 0) {
+                try {
+                    System.out.println(tbl.getValueAt(selectRow, 0).toString().substring(2));
+                    showDetailBill(tbl.getValueAt(selectRow, 0).toString().substring(2));
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                infoId.setText(tbl.getValueAt(selectRow, 0).toString());
+                infoTime.setText(tbl.getValueAt(selectRow, 2).toString());
+                infoType.setText(tbl.getValueAt(selectRow, 3).toString());
+                infoMoney.setText(tbl.getValueAt(selectRow,4).toString());
+                infoStatus.setText(tbl.getValueAt(selectRow, 5).toString());
+            }
+
+        }
     }
 }

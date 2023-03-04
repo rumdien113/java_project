@@ -6,9 +6,8 @@ import java.util.*;
 public interface IDAO<T>{
 
     boolean insert(T t) throws Exception;
+    List<T> selectAll() throws Exception;
+//    String SelectLast() throws Exception;
 
-//    void Select(DefaultTableModel tbl) throws Exception;
-
-    void Search(DefaultTableModel tbl, String name, String type, String status) throws Exception;
-//    void Search(DefaultTableModel tbl) throws Exception;
+    void search(DefaultTableModel tbl, String name, String type, String status) throws Exception;
 }

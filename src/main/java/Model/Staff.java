@@ -1,26 +1,27 @@
 package Model;
 
 public class Staff extends Person {
-    Shift shift = new Shift();
     private String sex;
     private String birth;
     private String mail;
     private String password;
     private String part;
     private String status;
-    private int salary;
     public Staff() {
     }
-
+    public Staff(String id, String name, String sdt, String part, String status) {
+        super(id, name, sdt);
+        this.part = part;
+        this.status = status;
+    }
     public Staff(String id, String name, String sex, String birth, String mail,
-                 String sdt, String part, String status, int salary) {
+                 String sdt, String part, String status) {
         super(id, name, sdt);
         this.sex = sex;
         this.birth = birth;
         this.mail = mail;
         this.part = part;
         this.status = status;
-        this.salary = salary;
     }
 
     public String getSex() {
@@ -69,27 +70,5 @@ public class Staff extends Person {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public int getSalary() {
-        return salary;
-    }
-
-    public void setSalary(int Salary) {
-        this.salary = salary;//14000 * shift.getNumhour();
-    }
-
-    @Override
-    public String toString() {
-        return "Staff{" +
-                "shift=" + shift +
-                ", sex='" + sex + '\'' +
-                ", birth='" + birth + '\'' +
-                ", mail='" + mail + '\'' +
-                ", password='" + password + '\'' +
-                ", part='" + part + '\'' +
-                ", status='" + status + '\'' +
-                ", salary=" + salary +
-                '}';
     }
 }

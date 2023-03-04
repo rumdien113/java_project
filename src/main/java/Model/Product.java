@@ -6,10 +6,20 @@ public class Product {
     private String type;
     private int cost; //giá cả
     private String status;
+    private String password;
 
     public Product() {
     }
 
+    public Product(String id, String password) {
+        this.id = id;
+        this.password = password;
+    }
+    public Product(String id, String name, int cost) {
+        this.id = id;
+        this.name = name;
+        this.cost = cost;
+    }
     public Product(String id, String name, String type, int cost, String status) {
         this.id = id;
         this.name = name;
@@ -56,5 +66,13 @@ public class Product {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

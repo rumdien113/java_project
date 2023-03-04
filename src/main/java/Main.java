@@ -1,7 +1,9 @@
 import View.ViewHomePage;
+import View.ViewLogin;
 
 public class Main {
     public static void main(String[] args) {
-        ViewHomePage v = new ViewHomePage();
+        ViewLogin login = new ViewLogin();
+//        ViewHomePage v = new ViewHomePage();
     }
 }

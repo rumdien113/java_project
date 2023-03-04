@@ -7,15 +7,16 @@ package View;
 
 import Controller.StaffController;
 import DAO.DBConnect;
+import DAO.StaffDAO;
 import Model.Staff;
+import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.List;
 
 
 public class ViewStaff extends JPanel implements ActionListener {
@@ -29,6 +30,7 @@ public class ViewStaff extends JPanel implements ActionListener {
     JTextArea info_notetf;
     JComboBox info_partcb, info_statuscb, list_partcb, list_statuscb;
     JButton addbtn, updatebtn, deletebtn, search;
+//    JDateChooser calendar;
     JScrollPane listScroll;
     JTable listTableStaff;
     JRadioButton male, female;
@@ -101,7 +103,6 @@ public class ViewStaff extends JPanel implements ActionListener {
         sexBg = new ButtonGroup();
         sexBg.add(male);
         sexBg.add(female);
-        //      =========================================================
 
         info_birthlb = new JLabel("Ngày sinh:");
         info_birthlb.setFont(font);
@@ -109,7 +110,6 @@ public class ViewStaff extends JPanel implements ActionListener {
 
         info_birthtf = new JTextField();
         info_birthtf.setBounds(200, 300, 370, 25);
-//        dateChooser.setTextRefernce(info_birthtf);
 
         info_maillb = new JLabel("Email:");
         info_maillb.setFont(font);
@@ -124,13 +124,6 @@ public class ViewStaff extends JPanel implements ActionListener {
 
         info_sdttf = new JTextField();
         info_sdttf.setBounds(200, 380, 370, 25);
-
-//        info_pwlb = new JLabel("Mật khẩu:");
-//        info_pwlb.setFont(font);
-//        info_pwlb.setBounds(20, 420, 120, 25);
-//
-//        info_pwtf = new JTextField();
-//        info_pwtf.setBounds(200, 420, 370, 25);
 
         info_partlb = new JLabel("Vai trò:");
         info_partlb.setFont(font);
@@ -300,78 +293,53 @@ public class ViewStaff extends JPanel implements ActionListener {
         info_statuscb.setSelectedItem(0);
     }
     public void StaffList() throws Exception {
-        Connection connect = new DBConnect().getConnect();
-        String query = "Select `MaNV`, `TenNV`, `GioiTinh`, `NgaySinh`, `Email`, `Sdt`, `ChucVu`, `TrangThai` from nhanvien";
-        Statement sta = connect.createStatement();
-        ResultSet result = sta.executeQuery(query);
         tbl.setRowCount(0);
-
-        while (result.next()) {
+        List<Staff> listS = stC.selectAll();
+        for (Staff s : listS) {
             Object Staffs[] = {
-                    result.getString("MaNV"),
-                    result.getString("TenNV"),
-                    result.getString("GioiTinh"),
-                    result.getString("NgaySinh"),
-                    result.getString("Email"),
-                    result.getString("Sdt"),
-                    result.getString("ChucVu"),
-                    result.getString("TrangThai")
+                    s.getId(),
+                    s.getName(),
+                    s.getSex(),
+                    s.getBirth(),
+                    s.getMail(),
+                    s.getSdt(),
+                    s.getPart(),
+                    s.getStatus()
             };
             tbl.addRow(Staffs);
             tbl.fireTableDataChanged();
         }
-        result.close();
-        connect.close();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == addbtn) {
-            // Em lấy ra những thông tin em vừa nhập
             input();
-            // Tạo đối tượng Staff truyền thông tin em vừa lấy ra qua constructor
-            Staff s = new Staff(id, name, sex, birth, mail, sdt, part, status, 4);
-            // Vi du
+            Staff s = new Staff(id, name, sex, birth, mail, sdt, part, status);
             try {
-                boolean check = stC.insert(s);
-                if(check) {
-                    StaffList();
-                    inputReset();
-                    // Tạo dialog in ra thêm thành công
-                    JOptionPane.showMessageDialog(null, "Thêm thành công");
-                }
+                stC.insert(s);
+                StaffList();
+                inputReset();
+                JOptionPane.showMessageDialog(null, "Thêm thành công");
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         }
-
         if(e.getSource() == updatebtn) {
+            input();
             try {
-                input();
-                String update = "UPDATE nhanvien SET MaNV = '" + id + "', TenNV = '" + name + "', GioiTinh = '" + sex +
-                        "', NgaySinh = '" + birth + "', Email = '" + mail + "', Sdt = '" + sdt +
-                        "', ChucVu =  '" + part + "', TrangThai = '" + status + "' WHERE nhanvien.MaNV = '" + idtmp + "'";
-                Connection connect = new DBConnect().getConnect();
-                Statement sta = connect.createStatement();
-                sta.executeUpdate(update);
-                sta.close();
-
+                Staff s = new Staff(id,name, sex, birth, mail, sdt, part, status);
+                stC.update(s);
                 StaffList();
                 inputReset();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Cập nhật không thành công");
+                JOptionPane.showMessageDialog(null, "Cập nhật thành công");
             }
         }
-
         if(e.getSource() == deletebtn) {
+            input();
             try {
-                input();
-                String delete = "DELETE FROM nhanvien WHERE MaNV = '" + idtmp + "'";
-                Connection connect = new DBConnect().getConnect();
-                Statement sta = connect.createStatement();
-                sta.executeUpdate(delete);
-                sta.close();
-
+                stC.Delete(id);
                 StaffList();
                 inputReset();
             } catch (Exception ex) {

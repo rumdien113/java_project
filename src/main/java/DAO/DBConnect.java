@@ -4,7 +4,6 @@ import java.sql.*;
 
 public class DBConnect {
     private Connection connect;
-
     public DBConnect() throws Exception {
         String url = "jdbc:mysql://localhost:3306/cafedev";
         String user = "root";

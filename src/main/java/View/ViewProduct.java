@@ -11,10 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.*;
+import java.util.List;
 
 public class ViewProduct extends JPanel implements ActionListener {
 
@@ -230,78 +229,58 @@ public class ViewProduct extends JPanel implements ActionListener {
     }
 
     public void ProductList() throws Exception {
-        Connection connect = new DBConnect().getConnect();
-        String query = "SELECT * FROM `sanpham`";
-        Statement sta = connect.createStatement();
-        ResultSet result = sta.executeQuery(query);
-
         tbl.setRowCount(0);
-
-        while ((result.next())) {
+        List<Product> list = pdC.selectAll();
+        for(Product p : list) {
             Object Products[] = {
-                result.getString("MaSP"),
-                result.getString("TenSP"),
-                result.getString("LoaiSP"),
-                result.getString("GiaSP"),
-                result.getString("TrangThai")
+                    p.getId(),
+                    p.getName(),
+                    p.getType(),
+                    p.getCost(),
+                    p.getStatus()
             };
             tbl.addRow(Products);
             tbl.fireTableDataChanged();
         }
-        result.close();
-        connect.close();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addbtn) {
             input();
-            Product p = new Product(id, name, type, cost, status);
+            Product p = new Product("", name, type, cost, status);
             try {
-                boolean check = pdC.insert(p);
-                if (check) {
-                    ProductList();
-                    inputReset();
-                    JOptionPane.showMessageDialog(null, "Thêm thành công");
-//                    viewSell.list.add(new Item(id, name, cost));
-                    viewSell.ShowProduct();
-                }
+                pdC.insert(p);
+                ProductList();
+                inputReset();
+                JOptionPane.showMessageDialog(null, "Thêm thành công");
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         }
 
         if(e.getSource() == updatebtn) {
+            input();
             try {
-                input();
-                String update = "UPDATE sanpham SET MaSP = '" + id + "', TenSP = '" + name +
-                        "', LoaiSP = '" + type + "', GiaSP = '" + cost + "', TrangThai = '" +
-                        status + "' WHERE sanpham.MaSP = '"+ idtmp + "'";
-                Connection connect = new DBConnect().getConnect();
-                Statement sta = connect.createStatement();
-                sta.executeUpdate(update);
-                sta.close();
-
+                Product p = new Product(id, name, type, cost, status);
+                pdC.update(p);
                 ProductList();
                 inputReset();
+                JOptionPane.showMessageDialog(null, "Cập nhật thành công");
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Cập nhật không thành công");
+                throw new RuntimeException(ex);
             }
         }
 
         if(e.getSource() == deletebtn) {
+            input();
             try {
-                input();
-                String delete = "DELETE FROM sanpham WHERE MaSP = '" + idtmp + "'";
-                Connection connect = new DBConnect().getConnect();
-                Statement sta = connect.createStatement();
-                sta.executeUpdate(delete);
-                sta.close();
-
+                pdC.delete(id);
                 ProductList();
                 inputReset();
+                JOptionPane.showMessageDialog(null, "Xóa thành công");
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Xóa không thành công");
+                throw new RuntimeException(ex);
             }
         }
 
@@ -310,7 +289,7 @@ public class ViewProduct extends JPanel implements ActionListener {
             type = (String) list_typecb.getSelectedItem();
             status = (String) list_statuscb.getSelectedItem();
             try {
-                pdC.Search(tbl, name, type, status);
+                pdC.search(tbl, name, type, status);
                 list_nametf.setText("");
                 list_typecb.setSelectedItem(0);
                 list_statuscb.setSelectedItem(0);

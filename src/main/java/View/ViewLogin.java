@@ -1,18 +1,22 @@
 package View;
 
+import Controller.LoginController;
+import View.ViewHomePage;
+
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class ViewLogin extends JFrame implements ActionListener {
-
+    LoginController lC = new LoginController();
     JPanel logo, login;
     JLabel logolb, nameloginlb, passlb;
     JTextField namelogintf;
     JPasswordField passtf;
     JButton loginbtn, cancelbtn;
     Font font = new Font("Tahoma", Font.BOLD, 15);
+    String username, password;
     ImageIcon logoIM = new ImageIcon("D:\\CafeDev\\src\\main\\java\\Image\\coffeeWhite.png");
 
     public ViewLogin() {
@@ -32,15 +36,13 @@ public class ViewLogin extends JFrame implements ActionListener {
         logolb.setBackground(null);
 
         logo.add(logolb);
-
 //============================================================================
-
         login = new JPanel();
         login.setPreferredSize(new Dimension(296, 400));
         login.setLayout(null);
         login.setBackground(null);
 
-        nameloginlb = new JLabel("Tên đăng nhập:");
+        nameloginlb = new JLabel("Mã nhân viên:");
         nameloginlb.setFont(font);
         nameloginlb.setForeground(Color.WHITE);
         nameloginlb.setBounds(10, 50, 150, 20);
@@ -60,11 +62,13 @@ public class ViewLogin extends JFrame implements ActionListener {
         loginbtn.setBackground(Color.WHITE);
         loginbtn.setBounds(10, 230, 120, 40);
         loginbtn.setFont(font);
+        loginbtn.addActionListener(this);
 
         cancelbtn = new JButton("Thoát");
         cancelbtn.setBackground(Color.WHITE);
         cancelbtn.setBounds(150, 230, 120, 40);
         cancelbtn.setFont(font);
+        cancelbtn.addActionListener(this);
 
         login.add(nameloginlb);
         login.add(namelogintf);
@@ -77,9 +81,25 @@ public class ViewLogin extends JFrame implements ActionListener {
         this.add(login, BorderLayout.CENTER);
         this.setVisible(true);
     }
-
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if (e.getSource() == cancelbtn) {
+//            this.setVisible(false);
+            System.exit(0);
+        }
+        if (e.getSource() == loginbtn) {
+            username = namelogintf.getText();
+            password = String.valueOf(passtf.getPassword());
+            try {
+                if (password.equals(lC.selectpw(username))) {
+                    ViewHomePage v = new ViewHomePage(lC.selectName(username).substring(0, 5), lC.selectName(username).substring(5));
+                    this.setVisible(false);
+                }
+                else
+                    JOptionPane.showMessageDialog(null, "Sai mật khẩu!!!");
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }
